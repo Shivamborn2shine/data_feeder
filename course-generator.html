@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Course Data Generator</title>
+    <style>
+        textarea { width: 100%; height: 200px; margin: 10px 0; }
+        button { padding: 10px 20px; margin: 5px; }
+    </style>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <h2>📊 Excel to Firebase Converter</h2>
+    
+    <h3>1. Paste Excel Data (TSV format):</h3>
+    <textarea id="excelData" placeholder="Paste your Excel data here (copy from Excel and paste)">
+Web Dev	Learn HTML CSS JS	5 hours	1	HTML Basics	https://drive.com/id1	Learn basic tags	15:30	Syllabus	https://drive.com/pdf1
+Web Dev	Learn HTML CSS JS	5 hours	2	CSS Styling	https://drive.com/id2	Master CSS selectors	22:15	Cheat Sheet	https://drive.com/pdf2
+React	Master React hooks	8 hours	1	Components	https://drive.com/id3	Understand components	18:20	Guide	https://drive.com/pdf3
+    </textarea>
+    
+    <button onclick="convertExcelToFirebase()">Generate Firebase Data</button>
+        <!-- Add this where you want the button to appear -->
+    <button 
+    onclick="window.location.href='firebase-data-feeder.html'" 
+    style="
+        background-color: #4CAF50;
+        color: white;
+        border: none;
+        padding: 10px 16px;
+        border-radius: 8px;
+        cursor: pointer;
+        font-size: 16px;
+    "
+    >
+    Open Firebase Data Feeder
+    </button>
+
+    <h3>2. Generated Firebase Entries:</h3>
+    <textarea id="output" readonly></textarea>
+    
+    <script>
+    function convertExcelToFirebase() {
+        const excelData = document.getElementById('excelData').value;
+        const rows = excelData.split('\n').filter(row => row.trim());
+        
+        const courses = {};
+        
+        rows.forEach(row => {
+            const [courseTitle, description, duration, lectureNum, lectureTitle, videoUrl, lectureDesc, lectureDuration, resourceName, resourceUrl] = row.split('\t');
+            
+            if (!courses[courseTitle]) {
+                courses[courseTitle] = {
+                    title: courseTitle,
+                    description: description,
+                    duration: duration,
+                    lectures: [],
+                    resources: []
+                };
+            }
+            
+            // Add lecture if not exists
+            const lectureExists = courses[courseTitle].lectures.some(lec => lec.order === parseInt(lectureNum));
+            if (!lectureExists && lectureTitle) {
+                courses[courseTitle].lectures.push({
+                    id: `lecture${lectureNum}`,
+                    title: lectureTitle,
+                    videoUrl: videoUrl,
+                    description: lectureDesc,
+                    duration: lectureDuration,
+                    order: parseInt(lectureNum)
+                });
+            }
+            
+            // Add resource if not exists
+            if (resourceName && resourceUrl) {
+                const resourceExists = courses[courseTitle].resources.some(res => res.name === resourceName);
+                if (!resourceExists) {
+                    courses[courseTitle].resources.push({
+                        name: resourceName,
+                        type: resourceUrl.includes('.pdf') ? 'pdf' : 'file',
+                        url: resourceUrl,
+                        size: '1.5 MB'
+                    });
+                }
+            }
+        });
+        
+        // CHANGES MADE HERE:
+        // 1. Removed the trailing comma ","
+        // 2. Wrapped the entire output in curly braces {}
+        const output = `{\n${Object.values(courses).map(course => 
+            `  "${course.title}": ${JSON.stringify(course, null, 2)}`
+        ).join(',\n')}\n}`;
+        
+        document.getElementById('output').value = output;
+    }
+    </script>
+</body>
+</html>

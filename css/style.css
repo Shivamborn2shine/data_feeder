@@ -1,0 +1,264 @@
+/* style.css - Modern Excel to Firebase Converter Styles */
+
+/* Base Styles */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    min-height: 100vh;
+    padding: 40px 20px;
+    line-height: 1.6;
+}
+
+.container {
+    max-width: 1000px;
+    margin: 0 auto;
+    background: white;
+    border-radius: 20px;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+}
+
+/* Header Styles */
+.header {
+    background: linear-gradient(135deg, #2c3e50 0%, #3498db 100%);
+    color: white;
+    padding: 40px 30px;
+    text-align: center;
+}
+
+.header h1 {
+    font-size: 2.5rem;
+    margin-bottom: 10px;
+    font-weight: 700;
+}
+
+.header p {
+    font-size: 1.1rem;
+    opacity: 0.9;
+    font-weight: 300;
+}
+
+.header-icon {
+    font-size: 3rem;
+    margin-bottom: 20px;
+    display: block;
+}
+
+/* Main Content Styles */
+.main-content {
+    padding: 40px 30px;
+}
+
+.section {
+    margin-bottom: 30px;
+    background: #f8f9fa;
+    border-radius: 15px;
+    padding: 25px;
+    border-left: 5px solid #3498db;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.section:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+}
+
+.section h3 {
+    color: #2c3e50;
+    margin-bottom: 15px;
+    font-size: 1.3rem;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.section h3::before {
+    content: "📁";
+    font-size: 1.2rem;
+}
+
+.section-output h3::before {
+    content: "🔥";
+}
+
+/* Textarea Styles */
+.textarea-container {
+    margin-bottom: 15px;
+}
+
+.input-label {
+    display: block;
+    margin-bottom: 8px;
+    color: #2c3e50;
+    font-weight: 600;
+    font-size: 0.9rem;
+}
+
+.textarea-field {
+    width: 100%;
+    padding: 15px;
+    border: 2px solid #e1e8ed;
+    border-radius: 10px;
+    font-family: 'Courier New', monospace;
+    font-size: 14px;
+    resize: vertical;
+    transition: all 0.3s ease;
+    background: white;
+    line-height: 1.5;
+}
+
+.textarea-field:focus {
+    outline: none;
+    border-color: #3498db;
+    box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+}
+
+#excelData {
+    height: 180px;
+    background: linear-gradient(45deg, #f8f9fa, #ffffff);
+}
+
+#output {
+    height: 250px;
+    background: #2c3e50;
+    color: #00ff88;
+    font-weight: 500;
+}
+
+/* Button Styles */
+.button-container {
+    text-align: center;
+    margin: 25px 0;
+}
+
+.convert-btn {
+    background: linear-gradient(135deg, #00b894 0%, #00a085 100%);
+    color: white;
+    border: none;
+    padding: 15px 35px;
+    font-size: 1.1rem;
+    font-weight: 600;
+    border-radius: 50px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 5px 15px rgba(0, 184, 148, 0.3);
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.convert-btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 25px rgba(0, 184, 148, 0.4);
+    background: linear-gradient(135deg, #00a085 0%, #008c75 100%);
+}
+
+.convert-btn:active {
+    transform: translateY(-1px);
+}
+
+/* Example Section */
+.example-section {
+    background: #e8f4fc;
+    border-left-color: #2980b9;
+    margin-top: 15px;
+    padding: 15px;
+    border-radius: 8px;
+}
+
+.example-section h4 {
+    color: #2980b9;
+    margin-bottom: 10px;
+    font-size: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.example-data {
+    background: white;
+    padding: 12px;
+    border-radius: 6px;
+    font-family: 'Courier New', monospace;
+    font-size: 11px;
+    color: #2c3e50;
+    border: 1px solid #bdc3c7;
+    overflow-x: auto;
+}
+
+/* Footer Styles */
+.footer {
+    text-align: center;
+    padding: 20px;
+    background: #2c3e50;
+    color: white;
+    margin-top: 20px;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    body {
+        padding: 20px 10px;
+    }
+    
+    .container {
+        border-radius: 15px;
+    }
+    
+    .main-content {
+        padding: 20px 15px;
+    }
+    
+    .section {
+        padding: 20px;
+    }
+    
+    .header {
+        padding: 30px 20px;
+    }
+    
+    .header h1 {
+        font-size: 2rem;
+    }
+    
+    .convert-btn {
+        padding: 12px 25px;
+        font-size: 1rem;
+    }
+}
+
+/* Scrollbar Styling */
+.textarea-field::-webkit-scrollbar {
+    width: 8px;
+}
+
+.textarea-field::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 4px;
+}
+
+.textarea-field::-webkit-scrollbar-thumb {
+    background: #c1c1c1;
+    border-radius: 4px;
+}
+
+.textarea-field::-webkit-scrollbar-thumb:hover {
+    background: #a8a8a8;
+}
+
+/* Focus animation */
+@keyframes buttonPulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+    100% { transform: scale(1); }
+}
+
+.convert-btn:focus {
+    animation: buttonPulse 0.6s ease-in-out;
+}
