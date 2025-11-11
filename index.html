@@ -1,26 +1,33 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Course Data Generator</title>
-    <style>
-        textarea { width: 100%; height: 200px; margin: 10px 0; }
-        button { padding: 10px 20px; margin: 5px; }
-    </style>
+    <title>Firebase Course Generator - JSON Object Format</title>
+
     <link rel="stylesheet" href="css/style.css">
+    <style>
+        body { font-family: Arial; margin: 40px; max-width: 1200px; }
+        textarea { width: 100%; height: 300px; margin: 10px 0; padding: 10px; font-family: monospace; }
+        button { padding: 12px 24px; margin: 10px 5px; font-size: 16px; }
+        .section { margin: 20px 0; padding: 20px; border: 1px solid #ddd; }
+        .output { background: #f5f5f5; padding: 15px; }
+    </style>
 </head>
 <body>
-    <h2>📊 Excel to Firebase Converter</h2>
+    <h1>🔥 Firebase Course Generator - JSON Object Format</h1>
     
-    <h3>1. Paste Excel Data (TSV format):</h3>
-    <textarea id="excelData" placeholder="Paste your Excel data here (copy from Excel and paste)">
-Web Dev	Learn HTML CSS JS	5 hours	1	HTML Basics	https://drive.com/id1	Learn basic tags	15:30	Syllabus	https://drive.com/pdf1
-Web Dev	Learn HTML CSS JS	5 hours	2	CSS Styling	https://drive.com/id2	Master CSS selectors	22:15	Cheat Sheet	https://drive.com/pdf2
-React	Master React hooks	8 hours	1	Components	https://drive.com/id3	Understand components	18:20	Guide	https://drive.com/pdf3
-    </textarea>
-    
-    <button onclick="convertExcelToFirebase()">Generate Firebase Data</button>
-        <!-- Add this where you want the button to appear -->
-    <button 
+    <div class="section">
+        <h3>📋 Paste Your Excel Data (Tab-separated):</h3>
+        <textarea id="excelData" placeholder="Paste your Excel data here">
+DSA_DAY1	DAY 1: Introduction	1 hours 9 min	1	Path to Placement	https://drive.google.com/file/d/1mLvQAi2LN9ikQBi5v28vFZq5KqEPrqel/preview	04:09	Syllabus	https://drive.google.com/file/d/1EOtiIE8tBqPdWncts0THtCZ1EZ_L1Rr6/preview
+DSA_DAY1	DAY 1: Introduction		2	What you will learn	https://drive.google.com/file/d/1W-JPvLHDGpri6o-vZagGd3ucxEQwpT2t/preview	01:01		
+DSA_DAY1	DAY 1: Introduction		3	Prerequisites	https://drive.google.com/file/d/1IG_cdrMhXvCBfqpJS4pH9KWjhU6DCf8k/preview	05:09		
+DSA_DAY2	DAY 2: Java Basics	2 hours 9 min	1	Creating a JAVA File	https://drive.google.com/file/d/1o_RWAdI0xpoFkCPjkMx6JINoLLteOCdO/preview	05:09	Syllabus	https://drive.google.com/file/d/18IJ-4TNr76cZpIIDppl1gQTT3fjVy2GC/preview
+DSA_DAY2	DAY 2: Java Basics		2	Boilerplate Code	https://drive.google.com/file/d/1NVDblpLxPmHsWhKn9FPklbAV4kBjhxN1/preview	05:09		
+        </textarea>
+        <button onclick="convertToFirebase()" style="background: #28a745; color: white;">Generate Firebase Data</button>
+        <button onclick="clearData()">Clear</button>
+
+        <button 
     onclick="window.location.href='firebase-data-feeder.html'" 
     style="
         background-color: #4CAF50;
@@ -35,65 +42,94 @@ React	Master React hooks	8 hours	1	Components	https://drive.com/id3	Understand c
     Open Firebase Data Feeder
     </button>
 
-    <h3>2. Generated Firebase Entries:</h3>
-    <textarea id="output" readonly></textarea>
-    
+
+    </div>
+
+    <div class="section">
+        <h3>✅ Generated Firebase Data (Single JSON Object):</h3>
+        <textarea id="output" readonly class="output"></textarea>
+        <button onclick="copyToClipboard()" style="background: #007bff; color: white;">Copy to Clipboard</button>
+    </div>
+
     <script>
-    function convertExcelToFirebase() {
+    function convertToFirebase() {
         const excelData = document.getElementById('excelData').value;
         const rows = excelData.split('\n').filter(row => row.trim());
         
         const courses = {};
         
         rows.forEach(row => {
-            const [courseTitle, description, duration, lectureNum, lectureTitle, videoUrl, lectureDesc, lectureDuration, resourceName, resourceUrl] = row.split('\t');
+            const [courseId, courseTitle, totalDuration, lectureNum, lectureTitle, videoUrl, lectureDuration, resourceName, resourceUrl] = row.split('\t');
             
-            if (!courses[courseTitle]) {
-                courses[courseTitle] = {
+            if (!courseId) return;
+            
+            if (!courses[courseId]) {
+                courses[courseId] = {
                     title: courseTitle,
-                    description: description,
-                    duration: duration,
+                    description: `Complete ${courseTitle} with hands-on coding exercises and examples`,
+                    duration: totalDuration || 'Self-paced',
+                    thumbnail: "https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=400&h=250&fit=crop",
+                    instructor: "DSA Expert",
+                    createdAt: "2024-01-01",
                     lectures: [],
                     resources: []
                 };
             }
             
-            // Add lecture if not exists
-            const lectureExists = courses[courseTitle].lectures.some(lec => lec.order === parseInt(lectureNum));
-            if (!lectureExists && lectureTitle) {
-                courses[courseTitle].lectures.push({
-                    id: `lecture${lectureNum}`,
-                    title: lectureTitle,
-                    videoUrl: videoUrl,
-                    description: lectureDesc,
-                    duration: lectureDuration,
-                    order: parseInt(lectureNum)
-                });
+            // Add lecture
+            if (lectureTitle && videoUrl) {
+                const order = parseInt(lectureNum);
+                if (!isNaN(order)) {
+                    const lectureExists = courses[courseId].lectures.some(lec => lec.order === order);
+                    if (!lectureExists) {
+                        courses[courseId].lectures.push({
+                            id: `lecture${order}`,
+                            title: lectureTitle,
+                            videoUrl: videoUrl,
+                            description: `${lectureTitle} - Detailed explanation with examples`,
+                            duration: lectureDuration || '10:00',
+                            order: order
+                        });
+                    }
+                }
             }
             
-            // Add resource if not exists
+            // Add resource
             if (resourceName && resourceUrl) {
-                const resourceExists = courses[courseTitle].resources.some(res => res.name === resourceName);
+                const resourceExists = courses[courseId].resources.some(res => res.name === resourceName);
                 if (!resourceExists) {
-                    courses[courseTitle].resources.push({
+                    courses[courseId].resources.push({
                         name: resourceName,
-                        type: resourceUrl.includes('.pdf') ? 'pdf' : 'file',
+                        type: "file",
                         url: resourceUrl,
-                        size: '1.5 MB'
+                        size: "1.5 MB"
                     });
                 }
             }
         });
         
-        // CHANGES MADE HERE:
-        // 1. Removed the trailing comma ","
-        // 2. Wrapped the entire output in curly braces {}
-        const output = `{\n${Object.values(courses).map(course => 
-            `  "${course.title}": ${JSON.stringify(course, null, 2)}`
-        ).join(',\n')}\n}`;
+        // Format as a single JSON object with course IDs as keys
+        const output = JSON.stringify(courses, null, 2);
         
         document.getElementById('output').value = output;
     }
+
+    function clearData() {
+        document.getElementById('excelData').value = '';
+        document.getElementById('output').value = '';
+    }
+
+    function copyToClipboard() {
+        const output = document.getElementById('output');
+        output.select();
+        document.execCommand('copy');
+        alert('✅ Copied to clipboard! Ready to paste in Firebase.');
+    }
+
+    // Auto-generate on load
+    window.onload = function() {
+        setTimeout(convertToFirebase, 500);
+    };
     </script>
 </body>
 </html>
